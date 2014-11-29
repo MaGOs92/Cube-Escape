@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pre-dex-items>
+
+    <item
+        dex="/Users/guillaumefay/Desktop/CubeEscape/android/build/intermediates/pre-dexed/release/gdx-1.3.1-bd3427c1f3a96c7a09507bd474e5db506c5fbada.jar"
+        jar="/Users/guillaumefay/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.3.1/18995f8b7b19118975722370818023c76a86fdf4/gdx-1.3.1.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="18995f8b7b19118975722370818023c76a86fdf4"/>
+    <item
+        dex="/Users/guillaumefay/Desktop/CubeEscape/android/build/intermediates/pre-dexed/release/gdx-box2d-1.3.1-9f08f5310ccd2aa706087e0362afa8cc11c49140.jar"
+        jar="/Users/guillaumefay/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-box2d/1.3.1/868425fb2070db88a2949a25b88e0a737a372d4b/gdx-box2d-1.3.1.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="868425fb2070db88a2949a25b88e0a737a372d4b"/>
+    <item
+        dex="/Users/guillaumefay/Desktop/CubeEscape/android/build/intermediates/pre-dexed/release/gdx-backend-android-1.3.1-79f65881f0532cc6824856f9846f9898147d18ca.jar"
+        jar="/Users/guillaumefay/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-backend-android/1.3.1/a2d556d1380aa4324a24497fdfa2ebec64d40251/gdx-backend-android-1.3.1.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="a2d556d1380aa4324a24497fdfa2ebec64d40251"/>
+    <item
+        dex="/Users/guillaumefay/Desktop/CubeEscape/android/build/intermediates/pre-dexed/release/core-1.0-a1635236550df4d8d2eba90cea21dd3d68ef03ef.jar"
+        jar="/Users/guillaumefay/Desktop/CubeEscape/core/build/libs/core-1.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="80d6750a38f1dc48f5090658bdb0de42a3b15ce4"/>
+
+</pre-dex-items>
