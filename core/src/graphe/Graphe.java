@@ -14,6 +14,7 @@ public class Graphe {
 	private int tailleX;
 	private int tailleY;
 	private List<Block> listBlocks;
+	
 
 	public Graphe(int x, int y) {
 
@@ -71,6 +72,7 @@ public class Graphe {
 		for (int i = 0; i < tailleX; i++) {
 			v.x = i;
 			listBlocks.add(new Block(graphe.get(v)));
+			graphe.get(v).setBlock(true);
 		}
 	}
 

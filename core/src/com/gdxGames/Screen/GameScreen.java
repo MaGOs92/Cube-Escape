@@ -94,7 +94,6 @@ public class GameScreen extends ScreenAdapter implements Constantes {
 
 		if (appType != ApplicationType.Android) {
 			// Controles desktop
-			
 			if (Gdx.input.isKeyPressed(Keys.DPAD_LEFT)) {
 				accelX = 3f;
 			}
@@ -104,6 +103,7 @@ public class GameScreen extends ScreenAdapter implements Constantes {
 			if (Gdx.input.isKeyPressed(Keys.DPAD_UP)
 					&& world.et.isOnFloor) {
 				world.et.isJumping = true;
+				world.et.inTheAir = true;
 			}
 
 			// Controles tetris

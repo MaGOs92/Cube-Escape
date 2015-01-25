@@ -3,6 +3,7 @@ package graphe;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Sommet {
@@ -11,13 +12,15 @@ public class Sommet {
 	private final Vector2 coords;
 	
 	private boolean soucoupe;
-	private boolean et;
+	private boolean block;
+	private final Rectangle rect;
 	
 	public Sommet(Vector2 vec){
 		this.voisins = new ArrayList<Sommet>();
 		this.coords = vec;
 		this.soucoupe = false;
-		this.et = false;
+		this.block = false;
+		this.rect = new Rectangle(vec.x, vec.y, 1, 1);
 	}
 
 	public List<Sommet> getVoisins() {
@@ -36,13 +39,16 @@ public class Sommet {
 		this.soucoupe = soucoupe;
 	}
 
-	public boolean isEt() {
-		return et;
+	public boolean isBlock() {
+		return block;
 	}
 
-	public void setEt(boolean et) {
-		this.et = et;
+	public void setBlock(boolean block) {
+		this.block = block;
 	}
-
+	
+	public Rectangle getRect(){
+		return rect;
+	}
 
 }

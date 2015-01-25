@@ -32,7 +32,7 @@ public interface Constantes {
 	public static final int ET_JUMP = 2;
 	public static final int ET_FALL = 3;
 	
-	public static final int ET_WIDTH = 1;
+	public static final float ET_WIDTH = 1.5f;
 	public static final int ET_HEIGHT = 2;
 	
 	public static final float DAMP = 0.8f;

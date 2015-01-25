@@ -2,6 +2,10 @@ package com.gdxGames.CubeEscape;
 
 import java.util.Random;
 
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+
 import tetrisBlocks.*;
 import graphe.*;
 
@@ -14,25 +18,27 @@ public class World implements Constantes {
 	Random rand;
 	public int etat;
 	Block[] testBlocks;
+	public Array<Vector2> collidableBlocks;
 
 	public World() {
 		this.et = new ET(FRUSTRUM_WIDTH / 2, 1);
 		this.graphe = new Graphe(WORLD_WIDTH, WORLD_HEIGHT);
 		rand = new Random();
-		
+
 		testBlocks = new Block[4];
 		for (int i=0; i<testBlocks.length; i++){
 			testBlocks[i] = new Block(0,0);
 		}
-		
+
 		createTetrisBlock();
 		spawnSoucoupe();
+		collidableBlocks = new Array<Vector2>();
 		etat = RUNNING;
 	}
 
 	public void update(float delta, float accelX, float accelY,
 			int translation, boolean rotation) {
-		updateET(delta, accelX, accelY);
+		updateET(delta, accelX, accelY, this);
 		updateTetrisBlock(delta, translation, rotation);
 		updateSoucoupe(delta);
 		checkCollisions();
@@ -46,27 +52,27 @@ public class World implements Constantes {
 		case 1:
 			this.curTetrisBlock = new BlockI();
 			break;
-		// J
+			// J
 		case 2:
 			this.curTetrisBlock = new BlockJ();
 			break;
-		// L
+			// L
 		case 3:
 			this.curTetrisBlock = new BlockL();
 			break;
-		// O
+			// O
 		case 4:
 			this.curTetrisBlock = new BlockO();
 			break;
-		// S
+			// S
 		case 5:
 			this.curTetrisBlock = new BlockS();
 			break;
-		// T
+			// T
 		case 6:
 			this.curTetrisBlock = new BlockT();
 			break;
-		// Z
+			// Z
 		default:
 			this.curTetrisBlock = new BlockZ();
 			break;
@@ -79,10 +85,10 @@ public class World implements Constantes {
 		this.soucoupe = new Soucoupe(posX, posY);
 	}
 
-	private void updateET(float delta, float accelX, float accelY) {
+	private void updateET(float delta, float accelX, float accelY, World world) {
 		et.accel.x = -accelX;
 		et.velocity.y = accelY;
-		et.update(delta);
+		et.update(delta, world);
 
 	}
 
@@ -153,7 +159,6 @@ public class World implements Constantes {
 	}
 
 	private void checkCollisions() {
-		checkETCollisions();
 		checkTetrisBlockCollisions();
 		checkOtherCollisions();
 	}
@@ -168,28 +173,7 @@ public class World implements Constantes {
 			}
 		}
 	}
-
-	private void checkETCollisions() {
-		et.isOnFloor = false;
-		et.isOnWall = false;
-		for (Block b : graphe.getListBlocks()) {
-			if (et.bounds.overlaps(b.bounds) && et.velocity.y < 0) {
-				et.position.y = b.position.y + 1;
-				et.isOnFloor = true;
-			}
-			// if (et.bounds.overlaps(b.bounds) && et.velocity.y > 0){
-			// et.position.y = b.position.y;
-			// }
-			// if (et.bounds.overlaps(b.bounds) && et.velocity.x < 0){
-			// et.position.x = b.position.x + 1;
-			// et.isOnWall = true;
-			// }
-			// if (et.bounds.overlaps(b.bounds) && et.velocity.x > 0){
-			// et.position.x = b.position.x;
-			// et.isOnWall = true;
-			// }
-		}
-	}
+	
 
 	private void checkTetrisBlockCollisions() {
 		boolean collision = false;
@@ -206,6 +190,8 @@ public class World implements Constantes {
 						curTetrisBlock.tabBlock[i].position.x,
 						curTetrisBlock.tabBlock[i].position.y + 1);
 				graphe.getListBlocks().add(curTetrisBlock.tabBlock[i]);
+				graphe.getGraphe().get(new Vector2(curTetrisBlock.tabBlock[i].position.x, curTetrisBlock.tabBlock[i].position.y)).setBlock(true);
+				
 			}
 			createTetrisBlock();
 		}
