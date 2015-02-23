@@ -8,9 +8,9 @@ public class ET extends DynamicGameObject implements Constantes{
 	public int etat;
 	public boolean isOnFloor;
 	public boolean isJumping;
-	public boolean inTheAir;
 	float tempsEtat;
 	float jumpTime;
+	Rectangle etCrashTest;
 
 	public ET(float x, float y) {
 		super(x, y, ET_WIDTH, ET_HEIGHT);
@@ -18,11 +18,12 @@ public class ET extends DynamicGameObject implements Constantes{
 		tempsEtat = 0;
 		isJumping = false;
 		jumpTime = 0;
+		etCrashTest = new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
 	}
 	
 	private void updateJump(float delta){
 		if (isJumping){
-			accel.y = 10;
+			accel.y = 10 - (jumpTime*7.5f);
 			jumpTime += delta;
 			if (jumpTime > JUMP_TIME){
 				isJumping = false;
@@ -35,27 +36,22 @@ public class ET extends DynamicGameObject implements Constantes{
 		accel.y += gravite;
 	}
 	
-	private void updatePhysics(float delta, World world){
+	private void updateCollisions(float delta, World world){
 		
-		updateJump(delta);
-		
-		accel.add(accel.x * delta, accel.y * delta);
-		
-		velocity.add(accel.x, accel.y);
-		
-        Rectangle etCrashTest = new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
-        //etCrashTest.set(bounds.x, bounds.y, bounds.width, bounds.height);
+        etCrashTest.set(bounds.x, bounds.y, bounds.width, bounds.height);
         int startX, endX;
         int startY = (int) bounds.y;
         int endY = (int) (bounds.y + bounds.height);
-        if (velocity.x < 0) {
-            startX = endX = (int) Math.floor(bounds.x + velocity.x);
-        } else {
-            startX = endX = (int) Math.floor(bounds.x + bounds.width + velocity.x);
-        }
-        populateCollidableBlocks(startX, startY, endX, endY, world);
-        etCrashTest.x += velocity.x;
         
+        if (velocity.x < 0) {
+            startX = endX = (int) Math.floor(bounds.x + velocity.x * delta);
+        } else {
+            startX = endX = (int) Math.floor(bounds.x + bounds.width + velocity.x * delta);
+        }
+      
+        populateCollidableBlocks(startX, endX, startY, endY, world);
+      
+        etCrashTest.x += velocity.x * delta;
         for (Vector2 block : world.collidableBlocks) {
             if (block == null) continue;
             if (etCrashTest.overlaps(world.graphe.getGraphe().get(block).getRect()) && 
@@ -65,15 +61,20 @@ public class ET extends DynamicGameObject implements Constantes{
             }
         }
         etCrashTest.x = position.x;
+        
+        isOnFloor = false;
+        
         startX = (int) bounds.x;
         endX = (int) (bounds.x + bounds.width);
         if (velocity.y < 0) {
-            startY = endY = (int) Math.floor(bounds.y + velocity.y);
+            startY = endY = (int) Math.floor(bounds.y + velocity.y * delta);
         } else {
-            startY = endY = (int) Math.floor(bounds.y + bounds.height + velocity.y);
+            startY = endY = (int) Math.floor(bounds.y + bounds.height + velocity.y * delta);
         }
-        populateCollidableBlocks(startX, startY, endX, endY, world);
-        etCrashTest.y += velocity.y;
+
+        populateCollidableBlocks(startX, endX, startY, endY, world);
+        etCrashTest.y += velocity.y * delta;
+
         for (Vector2 block : world.collidableBlocks) {
             if (block == null) continue;
             if (etCrashTest.overlaps(world.graphe.getGraphe().get(block).getRect()) && 
@@ -85,8 +86,8 @@ public class ET extends DynamicGameObject implements Constantes{
                 break;
             }
         }
+        
         etCrashTest.y = position.y;
-       // velocity.mul(1 / delta);
 		
 		if (accel.x == 0){
 			velocity.x *= DAMP;
@@ -132,28 +133,32 @@ public class ET extends DynamicGameObject implements Constantes{
 	}
 	
 	public void update(float delta, World world){
-
-		updatePhysics(delta, world);
+		
+		updateJump(delta);
+		
+		accel.add(accel.x * delta, accel.y * delta);
+		
+		velocity.add(accel.x, accel.y);
+		
+		updateCollisions(delta, world);
 		
 		updateEtat(delta);
 		
 		position.add(velocity.x * delta, velocity.y * delta);
-		
-		// Vérifier que le personnage ne sorte pas de l'écran
 		
 		if (position.x < ET_WIDTH/2) position.x = ET_WIDTH/2;
 		if (position.x > WORLD_WIDTH - ET_WIDTH/2) position.x = WORLD_WIDTH - ET_WIDTH/2;
 		if (position.y < 0) position.y = 0;				
 	
 		bounds.setPosition(position);
-
+		System.out.println(position.x);
 	}
 	
 	private void populateCollidableBlocks(int startX, int endX, int startY, int endY, World world){
         world.collidableBlocks.clear();
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
-                if (x >= 0 && x < WORLD_WIDTH && y >=0 && y < WORLD_HEIGHT) {
+                if (x >= 0 && x < WORLD_WIDTH && y >= 0 && y < WORLD_HEIGHT) {
                     world.collidableBlocks.add(new Vector2(x, y));
                 }
             }

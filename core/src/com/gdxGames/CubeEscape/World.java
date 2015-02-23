@@ -2,7 +2,6 @@ package com.gdxGames.CubeEscape;
 
 import java.util.Random;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
@@ -21,7 +20,7 @@ public class World implements Constantes {
 	public Array<Vector2> collidableBlocks;
 
 	public World() {
-		this.et = new ET(FRUSTRUM_WIDTH / 2, 1);
+		this.et = new ET(FRUSTRUM_WIDTH / 2, 2);
 		this.graphe = new Graphe(WORLD_WIDTH, WORLD_HEIGHT);
 		rand = new Random();
 
