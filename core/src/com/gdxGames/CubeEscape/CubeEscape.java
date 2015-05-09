@@ -3,7 +3,6 @@ package com.gdxGames.CubeEscape;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
@@ -12,27 +11,31 @@ import com.gdxGames.Screen.MainMenu;
 
 public class CubeEscape extends Game implements Constantes, GestureListener {
 
-	public SpriteBatch batch;
-	public BitmapFont font;
 	public OrthographicCamera camera;
-	public float h;
-	public float w;
+	public SpriteBatch batch;
+	public float height;
+	public float width;
 	public int translation;
 	public boolean rotation;
 
 	public void create() {
+		
+		
 		batch = new SpriteBatch();
-		font = new BitmapFont();
-
+		camera = new OrthographicCamera();
+		
+		width = Gdx.graphics.getWidth();
+		height = Gdx.graphics.getHeight();
+		
 		camera = new OrthographicCamera(FRUSTRUM_WIDTH, FRUSTRUM_HEIGHT);
-		camera.position.set(camera.viewportWidth / 2,
-				camera.viewportHeight / 2, 0);
+		camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
 		camera.update();
 		
-		 w = Gdx.graphics.getWidth();
-	     h = Gdx.graphics.getHeight();
+        batch.setProjectionMatrix(camera.combined);
 
 		Assets.load();
+		
+		Assets.music.play();
 		
 	    GestureDetector gd = new GestureDetector(this);
 		Gdx.input.setInputProcessor(gd);
@@ -46,7 +49,6 @@ public class CubeEscape extends Game implements Constantes, GestureListener {
 
 	public void dispose() {
 		batch.dispose();
-		font.dispose();
 	}
 
 	@Override

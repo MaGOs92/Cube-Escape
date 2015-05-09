@@ -7,8 +7,8 @@ public class ET extends DynamicGameObject implements Constantes{
 	
 	public int etat;
 	public boolean isOnFloor;
-	public boolean isJumping;
 	float tempsEtat;
+	boolean isJumping;
 	float jumpTime;
 	Rectangle etCrashTest;
 
@@ -23,7 +23,7 @@ public class ET extends DynamicGameObject implements Constantes{
 	
 	private void updateJump(float delta){
 		if (isJumping){
-			accel.y = 10 - (jumpTime*7.5f);
+			accel.y = 4;
 			jumpTime += delta;
 			if (jumpTime > JUMP_TIME){
 				isJumping = false;
@@ -33,7 +33,7 @@ public class ET extends DynamicGameObject implements Constantes{
 		else {
 			accel.y = 0;
 		}
-		accel.y += gravite;
+		accel.y += gravite;	
 	}
 	
 	private void updateCollisions(float delta, World world){
@@ -54,9 +54,15 @@ public class ET extends DynamicGameObject implements Constantes{
         etCrashTest.x += velocity.x * delta;
         for (Vector2 block : world.collidableBlocks) {
             if (block == null) continue;
-            if (etCrashTest.overlaps(world.graphe.getGraphe().get(block).getRect()) && 
-            		world.graphe.getGraphe().get(block).isBlock()) {
+            if (etCrashTest.overlaps(world.graphe.getGraphe().get(block).getBlock().bounds) && 
+            		world.graphe.getGraphe().get(block).isBlock() ||
+            		etCrashTest.overlaps(world.graphe.getGraphe().get(block).getBlock().bounds) && 
+            		world.graphe.getGraphe().get(block).isTetrisBlock()) {
                 velocity.x = 0;
+                if (isOnFloor){
+                	Assets.jumpSound.play(0.1f);
+                	isJumping = true;
+                }
                 break;
             }
         }
@@ -77,8 +83,10 @@ public class ET extends DynamicGameObject implements Constantes{
 
         for (Vector2 block : world.collidableBlocks) {
             if (block == null) continue;
-            if (etCrashTest.overlaps(world.graphe.getGraphe().get(block).getRect()) && 
-            		world.graphe.getGraphe().get(block).isBlock()) {
+            if (etCrashTest.overlaps(world.graphe.getGraphe().get(block).getBlock().bounds) && 
+            		world.graphe.getGraphe().get(block).isBlock() ||
+            		etCrashTest.overlaps(world.graphe.getGraphe().get(block).getBlock().bounds) && 
+            		world.graphe.getGraphe().get(block).isTetrisBlock()) {
                 if (velocity.y < 0) {
                 	isOnFloor = true;
                 }
@@ -91,6 +99,10 @@ public class ET extends DynamicGameObject implements Constantes{
 		
 		if (accel.x == 0){
 			velocity.x *= DAMP;
+			// Arrete le personnage quand la vélocité devient trop faible
+			if (velocity.x < 0.01 && velocity.x > 0 || velocity.x > -0.01 && velocity.x < 0){
+				velocity.x = 0;
+			}
 		}
 		
 		if (velocity.x > MAX_VEL_X){
@@ -100,11 +112,18 @@ public class ET extends DynamicGameObject implements Constantes{
 			velocity.x = -MAX_VEL_X;
 		}
 		
+		if (velocity.y > MAX_VEL_Y){
+			velocity.y = MAX_VEL_Y;
+		}
+		else if (velocity.y < -MAX_VEL_Y){
+			velocity.y = -MAX_VEL_Y;
+		}
+		
 	}
 	
 	private void updateEtat(float delta){
 		
-		if (accel.x != 0 && isOnFloor) {
+		if (velocity.x != 0 && accel.x != 0 && isOnFloor) {
 			if (etat != ET_RUN){
 				etat = ET_RUN;
 				tempsEtat = 0;
@@ -128,7 +147,6 @@ public class ET extends DynamicGameObject implements Constantes{
 				tempsEtat = 0;
 			}
 		}
-		
 		tempsEtat += delta;
 	}
 	
@@ -137,7 +155,7 @@ public class ET extends DynamicGameObject implements Constantes{
 		updateJump(delta);
 		
 		accel.add(accel.x * delta, accel.y * delta);
-		
+
 		velocity.add(accel.x, accel.y);
 		
 		updateCollisions(delta, world);
@@ -146,12 +164,18 @@ public class ET extends DynamicGameObject implements Constantes{
 		
 		position.add(velocity.x * delta, velocity.y * delta);
 		
-		if (position.x < ET_WIDTH/2) position.x = ET_WIDTH/2;
-		if (position.x > WORLD_WIDTH - ET_WIDTH/2) position.x = WORLD_WIDTH - ET_WIDTH/2;
-		if (position.y < 0) position.y = 0;				
+		if (position.x < 0){
+			position.x = 0;
+			velocity.x = 0;
+		}
+		else if (position.x > FRUSTRUM_WIDTH - 1){
+			position.x = FRUSTRUM_WIDTH - 1;
+			velocity.x = 0;
+		}
+		
+		if (position.y > FRUSTRUM_HEIGHT - 1) position.y = FRUSTRUM_HEIGHT - 1;
 	
 		bounds.setPosition(position);
-		System.out.println(position.x);
 	}
 	
 	private void populateCollidableBlocks(int startX, int endX, int startY, int endY, World world){

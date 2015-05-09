@@ -1,24 +1,30 @@
 package com.gdxGames.CubeEscape;
 
+import graphe.Sommet;
+
+import java.util.Map;
+
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 
 public class WorldRenderer implements Constantes{
 
 	World world;
 	SpriteBatch batch;
-	OrthographicCamera camera;
+	OrthographicCamera GameCamera;
 
-	public WorldRenderer (SpriteBatch batch, World world, OrthographicCamera camera) {
+	public WorldRenderer (SpriteBatch batch, OrthographicCamera GameCamera, World world) {
 		this.world = world;
 		this.batch = batch;
-		this.camera = camera;
-		this.camera.update();
+		this.GameCamera = GameCamera;
+		GameCamera.update();
 	}
 
 	public void render () {
-		this.camera.update();
+		GameCamera.update();
+		batch.setProjectionMatrix(GameCamera.combined);
 		renderBackGround();
 		renderObjects();
 	}
@@ -34,7 +40,7 @@ public class WorldRenderer implements Constantes{
 		batch.enableBlending();
 		batch.begin();
 		renderET();
-		renderTetrisBlocks();
+		//renderTetrisBlocks();
 		renderSoucoupe();
 		renderGraphe();
 		batch.end();
@@ -58,27 +64,24 @@ public class WorldRenderer implements Constantes{
 
 		float side = (world.et.velocity.x < 0) ? -1 : 1;
 		if (side < 0)
-			batch.draw(keyFrame, world.et.position.x + 0.75f, world.et.position.y, side * 1.5f, 2);
+			batch.draw(keyFrame, world.et.position.x + ET_WIDTH, world.et.position.y, side * ET_WIDTH, ET_HEIGHT);
 		else
-			batch.draw(keyFrame, world.et.position.x - 0.75f, world.et.position.y, side * 1.5f, 2);
-	}
-	
-	private void renderTetrisBlocks(){
-		for (int i=0; i<4; i++){
-			batch.draw(Assets.block, world.curTetrisBlock.tabBlock[i].position.x, world.curTetrisBlock.tabBlock[i].position.y, 1, 1);
-		}
+			batch.draw(keyFrame, world.et.position.x, world.et.position.y, side * ET_WIDTH, ET_HEIGHT);
 	}
 	
 	private void renderSoucoupe(){
 		TextureRegion keyFrame = Assets.soucoupe.getKeyFrame(world.soucoupe.tempsEtat, Animation.ANIMATION_LOOPING);
-		batch.draw(keyFrame, world.soucoupe.position.x, world.soucoupe.position.y, 2, 1.5f);
+		batch.draw(keyFrame, world.soucoupe.position.x, world.soucoupe.position.y, SOUCOUPE_WIDTH, SOUCOUPE_HEIGHT);
 	}
 	
 	private void renderGraphe(){
-
-		for (Block s : world.graphe.getListBlocks()){
-			if (s.position.y == 0) batch.draw(Assets.sol, s.position.x, s.position.y, 1, 1);
-			else batch.draw(Assets.block, s.position.x, s.position.y, 1, 1);
+		for (Map.Entry<Vector2, Sommet> e : world.graphe.getGraphe().entrySet()) {
+			Vector2 key = e.getKey();
+			if (key.y == 0) batch.draw(Assets.sol, key.x, key.y, BLOCK_WIDTH, BLOCK_HEIGHT);
+			else if (world.graphe.getGraphe().get(key).isBlock() || 
+					world.graphe.getGraphe().get(key).isTetrisBlock()){
+				batch.draw(Assets.block, key.x, key.y, BLOCK_WIDTH, BLOCK_HEIGHT);
+			}
 		}
 	}
 

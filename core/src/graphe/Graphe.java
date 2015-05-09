@@ -1,25 +1,20 @@
 package graphe;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
 import com.badlogic.gdx.math.Vector2;
-import com.gdxGames.CubeEscape.Block;
+
 
 public class Graphe {
 
 	private Map<Vector2, Sommet> graphe;
 	private int tailleX;
 	private int tailleY;
-	private List<Block> listBlocks;
 	
 
 	public Graphe(int x, int y) {
 
 		graphe = new HashMap<Vector2, Sommet>();
-		listBlocks = new ArrayList<Block>();
 		tailleX = x;
 		tailleY = y;
 		construireSommets();
@@ -56,14 +51,6 @@ public class Graphe {
 
 				}
 			}
-// Debug
-//			System.out.println("Sommet courant : " + curSommet.getCoords().x
-//					+ ", " + curSommet.getCoords().y);
-//			for (Sommet sommet : curSommet.getVoisins()) {
-//				System.out.println("Sommet voisin : " + sommet.getCoords().x
-//						+ ", " + sommet.getCoords().y);
-//			}
-
 		}
 	}
 
@@ -71,17 +58,12 @@ public class Graphe {
 		Vector2 v = new Vector2(0, 0);
 		for (int i = 0; i < tailleX; i++) {
 			v.x = i;
-			listBlocks.add(new Block(graphe.get(v)));
 			graphe.get(v).setBlock(true);
 		}
 	}
 
 	public Map<Vector2, Sommet> getGraphe() {
 		return graphe;
-	}
-
-	public List<Block> getListBlocks() {
-		return listBlocks;
 	}
 
 }

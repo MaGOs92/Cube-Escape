@@ -2,25 +2,23 @@ package graphe;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.gdxGames.CubeEscape.Block;
 
 public class Sommet {
 
 	private final List<Sommet> voisins;
 	private final Vector2 coords;
-	
-	private boolean soucoupe;
-	private boolean block;
-	private final Rectangle rect;
+	private boolean isTetrisBlock;
+	private boolean isBlock;
+	private final Block block;
 	
 	public Sommet(Vector2 vec){
-		this.voisins = new ArrayList<Sommet>();
-		this.coords = vec;
-		this.soucoupe = false;
-		this.block = false;
-		this.rect = new Rectangle(vec.x, vec.y, 1, 1);
+		voisins = new ArrayList<Sommet>();
+		coords = vec;
+		isBlock = false;
+		
+		block = new Block(vec.x, vec.y);
 	}
 
 	public List<Sommet> getVoisins() {
@@ -30,25 +28,25 @@ public class Sommet {
 	public Vector2 getCoords() {
 		return coords;
 	}
-
-	public boolean isSoucoupe() {
-		return soucoupe;
+	
+	public boolean isTetrisBlock() {
+		return isTetrisBlock;
 	}
 
-	public void setSoucoupe(boolean soucoupe) {
-		this.soucoupe = soucoupe;
+	public void setTetrisBlock(boolean isTetrisBlock) {
+		this.isTetrisBlock = isTetrisBlock;
 	}
 
 	public boolean isBlock() {
-		return block;
+		return isBlock;
 	}
 
-	public void setBlock(boolean block) {
-		this.block = block;
+	public void setBlock(boolean isBlock) {
+		this.isBlock = isBlock;
 	}
-	
-	public Rectangle getRect(){
-		return rect;
+
+	public Block getBlock(){
+		return block;
 	}
 
 }
